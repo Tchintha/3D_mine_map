@@ -1,4 +1,3 @@
-// main.js - 3D Uranium Mine Model with Fly-through (Three.js)
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js';
 import { FlyControls } from 'https://cdn.jsdelivr.net/npm/three@0.154.0/examples/jsm/controls/FlyControls.js';
 console.log('main.js loaded!');
