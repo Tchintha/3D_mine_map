@@ -1,4 +1,7 @@
 // main.js - 3D Uranium Mine Model with Fly-through (Three.js)
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js';
+import { FlyControls } from 'https://cdn.jsdelivr.net/npm/three@0.154.0/examples/jsm/controls/FlyControls.js';
+console.log('main.js loaded!');
 let scene, camera, renderer, controls;
 const labels = [];
 
@@ -6,49 +9,62 @@ init();
 animate();
 
 function init() {
+  console.log('init() called');
   // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xcfd8dc);
+  console.log('Scene created');
 
   // Camera
   camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.set(0, 40, 120);
+  console.log('Camera created');
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('container').appendChild(renderer.domElement);
+  console.log('Renderer created and added to DOM');
 
   // Controls (FlyControls)
   controls = new THREE.FlyControls(camera, renderer.domElement);
   controls.movementSpeed = 30;
   controls.rollSpeed = Math.PI / 12;
   controls.dragToLook = true;
+  console.log('FlyControls initialized');
 
   // Lighting
   const sun = new THREE.DirectionalLight(0xffffe0, 1.1);
   sun.position.set(100, 200, 80);
   scene.add(sun);
   scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  console.log('Lighting added');
 
   // Terrain
   addDesertTerrain();
+  console.log('Desert terrain added');
   // Debug: add grid helper so we can see the scene is rendering
   scene.add(new THREE.GridHelper(400, 40, 0x888888, 0xbbbbbb));
   // Open-pit mine
   addOpenPitMine();
+  console.log('Open pit mine added');
   // Haul roads
   addHaulRoads();
+  console.log('Haul roads added');
   // Mining trucks
   addMiningTrucks();
+  console.log('Mining trucks added');
   // Geological layers (strata)
   addGeologicalLayers();
+  console.log('Geological layers added');
 
   // Resize
   window.addEventListener('resize', onWindowResize);
+  console.log('Resize listener added');
 }
 
 function addDesertTerrain() {
+  console.log('addDesertTerrain() called');
   // Use BufferGeometry for Three.js r125+
   const geo = new THREE.PlaneGeometry(400, 400, 32, 32);
   const pos = geo.attributes.position;
@@ -65,6 +81,7 @@ function addDesertTerrain() {
 }
 
 function addOpenPitMine() {
+  console.log('addOpenPitMine() called');
   // Create concentric stepped cylinders for benches
   const pitCenter = new THREE.Vector3(0, 0, 0);
   const benches = 6;
@@ -83,6 +100,7 @@ function addOpenPitMine() {
 }
 
 function addHaulRoads() {
+  console.log('addHaulRoads() called');
   // Spiral road approximation
   const curve = new THREE.CurvePath();
   let angle = 0, y = 0;
@@ -107,6 +125,7 @@ function addHaulRoads() {
 }
 
 function addMiningTrucks() {
+  console.log('addMiningTrucks() called');
   // Place a few low-poly trucks on benches/roads
   for (let i = 0; i < 4; i++) {
     const truck = createTruck();
@@ -145,6 +164,7 @@ function createTruck() {
 }
 
 function addGeologicalLayers() {
+  console.log('addGeologicalLayers() called');
   // Overburden
   const overburden = new THREE.Mesh(
     new THREE.CylinderGeometry(35, 40, 8, 32),
@@ -174,6 +194,7 @@ function addGeologicalLayers() {
 }
 
 function animate() {
+  // console.log('animate() called');
   requestAnimationFrame(animate);
   controls.update(0.018);
   renderer.render(scene, camera);
@@ -181,6 +202,7 @@ function animate() {
 }
 
 function updateLabels() {
+  // console.log('updateLabels() called');
   const labelsDiv = document.getElementById('labels');
   labelsDiv.innerHTML = '';
   labels.forEach(lab => {
@@ -206,6 +228,7 @@ function updateLabels() {
 }
 
 function onWindowResize() {
+  console.log('onWindowResize() called');
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
