@@ -33,6 +33,8 @@ function init() {
 
   // Terrain
   addDesertTerrain();
+  // Debug: add grid helper so we can see the scene is rendering
+  scene.add(new THREE.GridHelper(400, 40, 0x888888, 0xbbbbbb));
   // Open-pit mine
   addOpenPitMine();
   // Haul roads
@@ -47,10 +49,14 @@ function init() {
 }
 
 function addDesertTerrain() {
-  const geo = new THREE.PlaneGeometry(400, 400, 16, 16);
-  for (let i = 0; i < geo.vertices?.length; i++) {
-    geo.vertices[i].z = Math.random() * 1.2;
+  // Use BufferGeometry for Three.js r125+
+  const geo = new THREE.PlaneGeometry(400, 400, 32, 32);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    // Add subtle random height for desert dunes
+    pos.setZ(i, Math.random() * 1.5);
   }
+  geo.computeVertexNormals();
   const mat = new THREE.MeshLambertMaterial({ color: 0xe2c290 });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.rotation.x = -Math.PI / 2;
