@@ -1,239 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Namibian Uranium Mine 3D Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-dark: #23272f;
-      --bg-light: #f6f7fa;
-      --panel-dark: #181b20;
-      --panel-light: #ffffff;
-      --accent: #3ecf8e;
-      --text-dark: #f6f7fa;
-      --text-light: #23272f;
-      --shadow: 0 2px 16px rgba(0,0,0,0.12);
-    }
-    [data-theme="light"] {
-      --bg: var(--bg-light);
-      --panel: var(--panel-light);
-      --text: var(--text-light);
-    }
-    [data-theme="dark"] {
-      --bg: var(--bg-dark);
-      --panel: var(--panel-dark);
-      --text: var(--text-dark);
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', Arial, sans-serif;
-      background: var(--bg, #23272f);
-      color: var(--text, #f6f7fa);
-      transition: background 0.3s, color 0.3s;
-    }
-    body {
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      height: 56px;
-      background: var(--panel, #181b20);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      z-index: 10;
-    }
-    .brand {
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .theme-switch {
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      transition: background 0.2s;
-    }
-    .theme-switch:hover {
-      background: rgba(60, 207, 142, 0.1);
-    }
-    .main {
-      flex: 1;
-      display: flex;
-      height: calc(100vh - 56px);
-      min-height: 0;
-    }
-    .sidepanel {
-      width: 320px;
-      background: var(--panel, #181b20);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      padding: 24px 16px 16px 16px;
-      z-index: 2;
-      transition: background 0.3s;
-      min-width: 220px;
-      max-width: 90vw;
-    }
-    .sidepanel h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin: 0 0 18px 0;
-      color: var(--accent);
-    }
-    .controls, .data-panel {
-      margin-bottom: 32px;
-    }
-    .controls label, .controls button, .controls select {
-      display: block;
-      margin-bottom: 12px;
-      font-size: 1rem;
-    }
-    .controls input[type="checkbox"] {
-      margin-right: 8px;
-    }
-    .data-panel {
-      font-size: 0.98rem;
-      background: rgba(60, 207, 142, 0.07);
-      border-radius: 8px;
-      padding: 12px 10px;
-      box-shadow: 0 1px 4px rgba(60,207,142,0.04);
-    }
-    .data-panel .data-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .data-panel .data-label {
-      color: var(--accent);
-      font-weight: 600;
-    }
-    .viewport {
-      flex: 1;
-      position: relative;
-      background: var(--bg, #23272f);
-      min-width: 0;
-      min-height: 0;
-      overflow: hidden;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-    }
-    #three-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      background: #222;
-    }
-    .tooltip {
-      position: absolute;
-      pointer-events: none;
-      background: rgba(30,30,40,0.95);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-      z-index: 100;
-      min-width: 120px;
-      max-width: 320px;
-      display: none;
-    }
-    @media (max-width: 900px) {
-      .sidepanel { width: 180px; padding: 12px 6px; }
-      .main { flex-direction: column; }
-      .sidepanel { order: 2; width: 100vw; max-width: 100vw; }
-      .viewport { order: 1; }
-    }
-    @media (max-width: 600px) {
-      .topbar { padding: 0 8px; }
-      .sidepanel { padding: 8px 2px; }
-      .data-panel { font-size: 0.92rem; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namibia Uranium Resources: Geology & Mining Methods</title>
+    <meta name="description" content="Explore Namibia's uranium geology and mining methods through an immersive 3D experience. Learn about Namibian uranium deposits, extraction techniques, and environmental management.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 </head>
-<body data-theme="dark">
-  <header class="topbar">
-    <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="15" stroke="#3ecf8e" stroke-width="2"/><ellipse cx="16" cy="16" rx="10" ry="4" fill="#3ecf8e" fill-opacity="0.2"/></svg>
-      Namibian Uranium Mine 3D
-    </div>
-    <button class="theme-switch" id="themeSwitch" title="Toggle dark/light mode">
-      <svg id="themeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M6.343 17.657l-1.414 1.414M17.657 17.657l-1.414-1.414M6.343 6.343L4.929 7.757" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-  </header>
-  <div class="main">
-    <aside class="sidepanel">
-      <section class="controls">
-        <h2>Controls</h2>
-        <label><input type="checkbox" id="toggleTopsoil" checked>Topsoil</label>
-        <label><input type="checkbox" id="toggleOverburden" checked>Overburden</label>
-        <label><input type="checkbox" id="toggleOre" checked>Uranium Ore</label>
-        <label><input type="checkbox" id="toggleAquifer" checked>Aquifer</label>
-        <label><input type="checkbox" id="togglePipelines" checked>Leaching Pipelines</label>
-        <label><input type="checkbox" id="toggleTrucks" checked>Haul Trucks</label>
-        <label><input type="checkbox" id="toggleDrillRigs" checked>Drill Rigs</label>
-        <label><input type="checkbox" id="toggleStockpiles" checked>Ore Stockpiles</label>
-        <label for="miningMethod">Mining Method:</label>
-        <select id="miningMethod">
-          <option value="openpit">Open-Pit</option>
-          <option value="insitu">In-Situ Leach</option>
-        </select>
-      </section>
-      <section class="data-panel">
-        <h2>Mine Data</h2>
-        <div class="data-row"><span class="data-label">Depth:</span><span id="mineDepth">-- m</span></div>
-        <div class="data-row"><span class="data-label">Uranium Conc.:</span><span id="uraniumConc">-- ppm</span></div>
-        <div class="data-row"><span class="data-label">Impact:</span><span id="envImpact">--</span></div>
-      </section>
-      <button id="exportBtn" style="margin-top:auto;width:100%;background:var(--accent);color:#fff;border:none;padding:10px 0;border-radius:6px;font-weight:600;font-size:1rem;box-shadow:0 1px 6px rgba(60,207,142,0.12);cursor:pointer;">Export GLTF/GLB</button>
-    </aside>
-    <main class="viewport">
-      <canvas id="three-canvas"></canvas>
-      <div class="tooltip" id="tooltip"></div>
-    </main>
-  </div>
-  <!-- Three.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/exporters/GLTFExporter.js"></script>
-  
-  <!-- Main Application Script -->
-  <script src="main.js"></script>
-  
-  <script>
-    // Theme switcher logic
-    const themeSwitch = document.getElementById('themeSwitch');
-    const themeIcon = document.getElementById('themeIcon');
-    function setTheme(theme) {
-      document.body.setAttribute('data-theme', theme);
-      if (theme === 'dark') {
-        themeIcon.innerHTML = '<path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M6.343 17.657l-1.414 1.414M17.657 17.657l-1.414-1.414M6.343 6.343L4.929 7.757" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      } else {
-        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 1v2m0 18v2m11-11h-2M5 12H3m16.95-6.95l-1.414 1.414M6.343 17.657l-1.414 1.414M17.657 17.657l-1.414-1.414M6.343 6.343L4.929 7.757" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      }
-    }
-    themeSwitch.onclick = () => {
-      const current = document.body.getAttribute('data-theme');
-      setTheme(current === 'dark' ? 'light' : 'dark');
-    };
-    setTheme('dark');
-  </script>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🇳🇦</span>
+                <span class="logo-text">Namibia Uranium</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#formation" class="nav-link">Formation</a></li>
+                <li><a href="#exploration" class="nav-link">Exploration</a></li>
+                <li><a href="#extraction" class="nav-link">Extraction</a></li>
+                <li><a href="#processing" class="nav-link">Processing</a></li>
+                <li><a href="#reclamation" class="nav-link">Reclamation</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line">Namibia's Uranium</span>
+                <span class="title-line highlight">Resources & Mining</span>
+                <span class="title-line">Methods</span>
+            </h1>
+            <p class="hero-subtitle">Explore Namibia's unique uranium geology and mining techniques through an immersive 3D experience</p>
+            <button class="cta-button" onclick="scrollToSection('formation')">
+                Begin Exploration
+                <span class="button-arrow">→</span>
+            </button>
+        </div>
+        <div class="hero-visual">
+            <div id="hero-3d" class="hero-3d-container"></div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Geological Formation Section -->
+    <section id="formation" class="section formation-section">
+        <div class="section-container">
+                    <div class="section-header">
+            <h2 class="section-title">Namibian Uranium Geology</h2>
+            <p class="section-subtitle">Understanding Namibia's unique geological formations and uranium deposit characteristics</p>
+        </div>
+            <div class="content-grid">
+                <div class="text-content">
+                    <div class="content-card">
+                        <h3>Namibia's Geological Setting</h3>
+                        <p>Namibia's uranium deposits are primarily located in the Namib Desert and surrounding regions, characterized by:</p>
+                        <ul>
+                            <li>Ancient Precambrian basement rocks</li>
+                            <li>Karoo-aged sedimentary basins</li>
+                            <li>Desert environment with unique weathering</li>
+                            <li>Calcrete and caliche formations</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <h3>Namibian Deposit Types</h3>
+                        <div class="deposit-types">
+                            <div class="deposit-type">
+                                <h4>Calcrete-hosted</h4>
+                                <p>Uranium in calcium carbonate deposits (Langer Heinrich, Trekkopje)</p>
+                            </div>
+                            <div class="deposit-type">
+                                <h4>Sandstone-hosted</h4>
+                                <p>Uranium in porous sedimentary rocks (Rössing, Husab)</p>
+                            </div>
+                            <div class="deposit-type">
+                                <h4>Granite-hosted</h4>
+                                <p>Uranium in intrusive igneous rocks (Namibian basement)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <div id="formation-3d" class="model-container"></div>
+                    <div class="model-controls">
+                        <button class="control-btn" data-action="rotate">Rotate</button>
+                        <button class="control-btn" data-action="zoom">Zoom</button>
+                        <button class="control-btn" data-action="reset">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exploration Section -->
+    <section id="exploration" class="section exploration-section">
+        <div class="section-container">
+                    <div class="section-header">
+            <h2 class="section-title">Namibian Exploration Methods</h2>
+            <p class="section-subtitle">Modern exploration techniques adapted for Namibia's unique geological environment</p>
+        </div>
+            <div class="content-grid reverse">
+                <div class="visual-content">
+                    <div id="exploration-3d" class="model-container"></div>
+                    <div class="exploration-tools">
+                        <div class="tool-item">
+                            <div class="tool-icon">🔍</div>
+                            <span>Geophysical Surveys</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon">📊</div>
+                            <span>Geochemical Analysis</span>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-icon">🛰️</div>
+                            <span>Remote Sensing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-content">
+                    <div class="content-card">
+                        <h3>Namibian Exploration Techniques</h3>
+                        <p>Exploration in Namibia's desert environment requires specialized approaches:</p>
+                        <div class="method-grid">
+                            <div class="method">
+                                <h4>Desert-Adapted Surveys</h4>
+                                <p>Ground penetrating radar and electromagnetic surveys for calcrete detection</p>
+                            </div>
+                            <div class="method">
+                                <h4>Remote Sensing</h4>
+                                <p>Satellite imagery and aerial surveys for large-scale desert exploration</p>
+                            </div>
+                            <div class="method">
+                                <h4>Calcrete Sampling</h4>
+                                <p>Specialized sampling techniques for calcium carbonate-hosted uranium</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Namibian Environmental Challenges</h3>
+                        <p>Exploration in Namibia's sensitive desert ecosystem requires careful consideration of water resources, wildlife corridors, and cultural heritage sites.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Extraction Section -->
+    <section id="extraction" class="section extraction-section">
+        <div class="section-container">
+                    <div class="section-header">
+            <h2 class="section-title">Namibian Mining Methods</h2>
+            <p class="section-subtitle">Specialized mining techniques for Namibia's uranium deposits</p>
+        </div>
+            <div class="content-grid">
+                <div class="text-content">
+                    <div class="content-card">
+                        <h3>Namibian Mining Techniques</h3>
+                        <div class="mining-methods">
+                            <div class="method-tab active" data-method="open-pit">
+                                <h4>Open-Pit Mining</h4>
+                                <p>Primary method for calcrete-hosted deposits (Langer Heinrich, Trekkopje)</p>
+                            </div>
+                            <div class="method-tab" data-method="underground">
+                                <h4>Underground Mining</h4>
+                                <p>Used for deeper sandstone-hosted deposits (Rössing, Husab)</p>
+                            </div>
+                            <div class="method-tab" data-method="in-situ">
+                                <h4>In-Situ Leaching</h4>
+                                <p>Experimental method for low-grade calcrete deposits</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Namibian Mining Challenges</h3>
+                        <p>Mining in Namibia's desert environment requires specialized water management, dust control, and adaptation to extreme temperatures and remote locations.</p>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <div id="extraction-3d" class="model-container"></div>
+                    <div class="mining-stats">
+                        <div class="stat">
+                            <span class="stat-number">4th</span>
+                            <span class="stat-label">Global Uranium Producer</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">10%</span>
+                            <span class="stat-label">World Uranium Supply</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Major Mines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processing Section -->
+    <section id="processing" class="section processing-section">
+        <div class="section-container">
+                    <div class="section-header">
+            <h2 class="section-title">Namibian Processing Methods</h2>
+            <p class="section-subtitle">Specialized processing techniques for Namibia's unique uranium ores</p>
+        </div>
+            <div class="content-grid reverse">
+                <div class="visual-content">
+                    <div id="processing-3d" class="model-container"></div>
+                    <div class="processing-steps">
+                        <div class="step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-name">Crushing</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-name">Leaching</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-name">Extraction</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <span class="step-number">4</span>
+                            <span class="step-name">Purification</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-content">
+                    <div class="content-card">
+                        <h3>Processing Stages</h3>
+                        <div class="processing-info">
+                            <div class="stage-info active" data-stage="1">
+                                <h4>Stage 1: Calcrete Processing</h4>
+                                <p>Namibian calcrete ores require specialized crushing and grinding to liberate uranium from calcium carbonate matrix.</p>
+                            </div>
+                            <div class="stage-info" data-stage="2">
+                                <h4>Stage 2: Acid Leaching</h4>
+                                <p>Calcrete-hosted uranium requires sulfuric acid leaching under specific temperature and pH conditions.</p>
+                            </div>
+                            <div class="stage-info" data-stage="3">
+                                <h4>Stage 3: Ion Exchange</h4>
+                                <p>Uranium extraction using resin columns, optimized for Namibia's low-grade calcrete ores.</p>
+                            </div>
+                            <div class="stage-info" data-stage="4">
+                                <h4>Stage 4: Yellowcake Production</h4>
+                                <p>Final precipitation and drying produces uranium concentrate for export to global markets.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reclamation Section -->
+    <section id="reclamation" class="section reclamation-section">
+        <div class="section-container">
+                    <div class="section-header">
+            <h2 class="section-title">Namibian Environmental Management</h2>
+            <p class="section-subtitle">Sustainable practices for Namibia's sensitive desert ecosystem</p>
+        </div>
+            <div class="content-grid">
+                <div class="text-content">
+                    <div class="content-card">
+                        <h3>Reclamation Process</h3>
+                        <div class="reclamation-steps">
+                            <div class="reclamation-step">
+                                <div class="step-icon">🌱</div>
+                                <div class="step-content">
+                                    <h4>Desert Rehabilitation</h4>
+                                    <p>Stabilizing desert soils and preparing for native vegetation restoration</p>
+                                </div>
+                            </div>
+                            <div class="reclamation-step">
+                                <div class="step-icon">🌿</div>
+                                <div class="step-content">
+                                    <h4>Native Species Restoration</h4>
+                                    <p>Reintroducing indigenous desert plants and wildlife corridors</p>
+                                </div>
+                            </div>
+                            <div class="reclamation-step">
+                                <div class="step-icon">💧</div>
+                                <div class="step-content">
+                                    <h4>Water Conservation</h4>
+                                    <p>Implementing sustainable water management for arid environments</p>
+                                </div>
+                            </div>
+                            <div class="reclamation-step">
+                                <div class="step-icon">📊</div>
+                                <div class="step-content">
+                                    <h4>Long-term Monitoring</h4>
+                                    <p>Continuous assessment of desert ecosystem recovery and stability</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Namibian Sustainability Standards</h3>
+                        <p>Namibia's uranium mining sector adheres to strict environmental regulations, including desert ecosystem protection, water conservation, and community engagement programs.</p>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <div id="reclamation-3d" class="model-container"></div>
+                    <div class="reclamation-timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-year">Year 1-3</span>
+                            <span class="timeline-desc">Desert soil stabilization</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-year">Year 3-10</span>
+                            <span class="timeline-desc">Native vegetation establishment</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-year">Year 10+</span>
+                            <span class="timeline-desc">Desert ecosystem restoration</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Namibian Resources</h3>
+                    <ul>
+                        <li><a href="#">Mining Regulations</a></li>
+                        <li><a href="#">Environmental Standards</a></li>
+                        <li><a href="#">Community Development</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>About This Project</h3>
+                    <p>An immersive educational resource exploring Namibia's uranium geology and mining methods, designed to support situational tasks in geology and mining education.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>For educational inquiries about Namibia's uranium resources and mining methods.(its just the question </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Namibia Uranium Resources Education.and Tchinthaaaaaas Testinggggg</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
-</html>
+</html> 
